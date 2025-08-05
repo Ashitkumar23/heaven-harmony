@@ -1,3 +1,5 @@
+import Badge from "@mui/material/Badge";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import {
   Disclosure,
   DisclosureButton,
@@ -21,13 +23,34 @@ const navigation = [
   { name: "Accessories", href: "/accessories", current: false },
   { name: "New Arrivals", href: "/new-arrival", current: false },
 ];
-
+const solutions = [
+  {
+    name: "hi user",
+    description: "Get a better understanding of ",
+    href: "#",
+  },
+  {
+    name: "Important",
+    description: "It is a mockup webiste ",
+    href: "#",
+  },
+  {
+    name: "welcome",
+    description: "this is a personal project",
+    href: "#",
+  },
+];
+const callsToAction = [
+  { name: "Watch demo", href: "#" },
+  { name: "Contact sales", href: "#" },
+];
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
-  const location = useLocation()
+  const notificationCount = solutions.length;
+  const location = useLocation();
   return (
     <Disclosure as="nav" className="bg-gray-800 relative z-20">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -92,19 +115,59 @@ export default function Navbar() {
             <button
               type="button"
               className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
-            >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View notifications</span>
-              <BellIcon aria-hidden="true" className="size-6" />
-            </button>
-            <button
-              type="button"
+            ></button>
+            <Popover className="relative">
+              <Popover.Button className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                <Badge badgeContent={notificationCount} color="primary">
+                  <BellIcon aria-hidden="true" className="h-6 w-6" />
+                </Badge>
+                <span className="sr-only">View notifications</span>
+              </Popover.Button>
+
+              <Popover.Panel className="absolute right-0 z-10 mt-2 w-screen max-w-sm sm:max-w-md transform px-2 sm:px-0">
+                <div className="overflow-hidden rounded-3xl shadow-lg ring-1 ring-gray-900/5 bg-white">
+                  <div className="p-4">
+                    {solutions.map((item) => (
+                      <div
+                        key={item.name}
+                        className="group relative flex gap-x-4 rounded-lg p-4 hover:bg-gray-50"
+                      >
+                        <div>
+                          <a
+                            href={item.href}
+                            className="font-semibold text-gray-900"
+                          >
+                            {item.name}
+                            <span className="absolute inset-0" />
+                          </a>
+                          <p className="mt-1 text-gray-600">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 bg-gray-50">
+                    {callsToAction.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                      >
+                        {item.name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </Popover.Panel>
+            </Popover>
+            <Link
+              to={"/shopping-cart"}
               className="relative rounded-full ml-3 bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
             >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View Cart</span>
+              <span className="sr-only">cart</span>
               <ShoppingCartIcon aria-hidden="true" className="size-6" />
-            </button>
+            </Link>
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-3">
@@ -128,7 +191,15 @@ export default function Navbar() {
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
-                    Your Profile
+                    Your orders
+                  </a>
+                </MenuItem>
+                <MenuItem>
+                  <a
+                    href="#"
+                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                  >
+                    Track order
                   </a>
                 </MenuItem>
                 <MenuItem>

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 const products = [
   {
     id: 1,
@@ -42,29 +43,34 @@ export default function Featured_products() {
     <div className="bg-white my-4">
       <div className="mx-auto bg-blue-50 max-w-2xl rounded-lg px-4 py-16 sm:px-6 sm:py-20 lg:max-w-7xl lg:px-8">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">Featured Products</h2>
-
         <div className="mt-6 grid   grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {products.map((product) => (
-            <div key={product.id} className="group rounded-md relative bg-gray-200">
-              <img
-                alt={product.imageAlt}
-                src={product.imageSrc}
-                className="aspect-square w-full rounded-md object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
-              />
-              <div className="mt-4 flex m-2  justify-between">
-                <div>
-                  <h3 className="text-md font-bold text-gray-700">
-                    <a href={product.href}>
-                      <span aria-hidden="true" className="absolute inset-0" />
+            <Link key={product.id} to={`/details/${product.id}`}>
+              <div className="group rounded-md relative bg-gray-200 hover:shadow-lg transition">
+                <img
+                  alt={product.imageAlt}
+                  src={product.imageSrc}
+                  className="aspect-square w-full rounded-md object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
+                />
+                <div className="mt-4 flex m-2 justify-between">
+                  <div>
+                    <h3 className="text-md font-bold text-gray-700">
                       {product.name}
-                    </a>
-                  </h3>
-                  <p className="mt-1 text-sm text-gray-500">{product.color}</p>
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {product.color}
+                    </p>
+                  </div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {product.price}
+                  </p>
                 </div>
-                <p className="text-sm font-medium text-gray-900">{product.price}</p>
               </div>
-            </div>
+            </Link>
           ))}
+        </div>
+        <div  className="flex justify-end mt-6 text-md underline text-blue-600 font-medium cursor-pointer">
+          <Link to={'/products'} > See more</Link>
         </div>
       </div>
     </div>

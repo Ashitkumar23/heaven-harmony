@@ -20,10 +20,7 @@ export default function Hero_section() {
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
             <div className="relative rounded-full px-3 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
               Explore our newest arrived instruments.{" "}
-              <a href="#" className="font-semibold text-indigo-600">
-                <span aria-hidden="true" className="absolute inset-0" />
-                View now <span aria-hidden="true">&rarr;</span>
-              </a>
+              <Link className="font-semibold text-indigo-600" to={'/new-arrival'}><span aria-hidden="true" className="absolute inset-0" />View now <span aria-hidden="true">&rarr;</span></Link>
             </div>
           </div>
           <div className="text-center">
