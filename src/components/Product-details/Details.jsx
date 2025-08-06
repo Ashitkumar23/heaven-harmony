@@ -1,65 +1,44 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
+import { useParams } from "react-router-dom";
 
 export default function Details() {
-  const product = {
-    name: "Vintage Leather Backpack",
-    price: "$120.00",
-    description: `
-    This vintage leather backpack is designed for those who appreciate both timeless style and functionality. 
-    Crafted from premium full-grain leather, it ages beautifully and develops a unique patina over time, making 
-    each piece truly one-of-a-kind. The spacious main compartment can easily fit a 15-inch laptop, books, and 
-    other daily essentials. Multiple interior pockets help you stay organized, while the adjustable shoulder 
-    straps ensure maximum comfort during long commutes or weekend getaways. Whether you're heading to work, 
-    school, or a spontaneous adventure, this backpack is the perfect companion to carry everything you need 
-    in style.
-  `,
-    material: "Full-grain Leather",
-    texture: "Smooth Vintage Finish",
-    brandColor: "Dark Brown",
-    imageSrc:
-      "https://tailwindcss.com/plus-assets/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    imageAlt: "Vintage leather backpack with buckle straps.",
-  };
+  const [product, setProduct] = useState({});
+  const [reviews, setReviews] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const colors = [
-    { name: "Navy", value: "navy", class: "bg-gray-900" },
-    { name: "Gray", value: "gray", class: "bg-gray-400" },
-  ];
-
-  const reviews = [
-    {
-      name: "Alice Johnson",
-      image: "https://randomuser.me/api/portraits/women/68.jpg",
-      rating: 5,
-      text: "Absolutely love this backpack! The leather feels premium and the storage is perfect for my daily commute.",
-    },
-    {
-      name: "Michael Smith",
-      image: "https://randomuser.me/api/portraits/men/45.jpg",
-      rating: 4,
-      text: "Stylish and practical. I've received so many compliments. The straps are comfortable for long walks.",
-    },
-    {
-      name: "Emma Brown",
-      image: "https://randomuser.me/api/portraits/women/50.jpg",
-      rating: 5,
-      text: "High quality and looks even better in person. Worth every penny!",
-    },
-  ];
-
-  const [selectedColor, setSelectedColor] = useState("navy");
   const [newRating, setNewRating] = useState(null);
   const [reviewText, setReviewText] = useState("");
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const productRes = await fetch(`https://dummyjson.com/products/${id}`);
+        const productData = await productRes.json();
+        setProduct(productData);
+        setSelectedImage(productData.images?.[0]);
+
+
+        const reviewsRes = await fetch(`https://dummyjson.com/products/${id}/reviews`);
+        const reviewsData = await reviewsRes.json();
+        setReviews(reviewsData.reviews);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
 
   const handleSubmitReview = () => {
-   if (newRating === null || reviewText.trim() === "") {
-    alert('please fill the area')
-    return;
-   }
-   
-    alert(`Thank you for your review! ⭐ ${newRating || 0}/5`);
+    if (newRating === null || reviewText.trim() === "") {
+      alert("Please fill the review and select rating.");
+      return;
+    }
+
+    alert(`Thank you for your review! ⭐ ${newRating}/5`);
     setReviewText("");
     setNewRating(null);
   };
@@ -69,43 +48,39 @@ export default function Details() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Product Image */}
         <div className="flex-1">
-          <img
-            src={product.imageSrc}
-            alt={product.imageAlt}
-            className="w-full rounded-lg object-cover"
-          />
-        </div>
+  {/* Main Image */}
+  <img
+    src={selectedImage}
+    alt={product.title}
+    className="w-full max-h-[500px] object-cover rounded-lg mb-4"
+  />
 
-        {/* Product Details */}
+  {/* Thumbnails */}
+  <div className="flex gap-3 overflow-x-auto">
+    {product.images?.map((img, index) => (
+      <img
+        key={index}
+        src={img}
+        alt={`Thumbnail ${index + 1}`}
+        onClick={() => setSelectedImage(img)}
+        className={`h-20 w-20 object-cover rounded cursor-pointer border-2 transition ${
+          selectedImage === img ? "border-indigo-600" : "border-gray-300"
+        }`}
+      />
+    ))}
+  </div>
+</div>
+
+
+        {/* Product Info */}
         <div className="flex-1 flex flex-col justify-center">
-          <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-          <p className="text-xl text-gray-800 mb-4">{product.price}</p>
-
-          <div className="mb-6">
-            <h2 className="text-sm font-medium text-gray-900 mb-2">Colors</h2>
-            <div className="flex items-center gap-4">
-              {colors.map((color) => (
-                <label key={color.value} className="relative">
-                  <input
-                    type="radio"
-                    name="color"
-                    value={color.value}
-                    checked={selectedColor === color.value}
-                    onChange={() => setSelectedColor(color.value)}
-                    className="sr-only"
-                  />
-                  <span
-                    className={`w-8 h-8 rounded-full ${color.class} inline-block border-2 ${
-                      selectedColor === color.value
-                        ? "ring-2 ring-gray-900"
-                        : "border-gray-300"
-                    }`}
-                  ></span>
-                </label>
-              ))}
-            </div>
+          <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
+          <div className="flex justify-between">
+            <p className="text-xl text-gray-800 mb-4">${product.price}</p>
+            <p className="text-xl text-gray-800 mb-4">
+              Rating: <Rating value={product.rating} precision={0.5} readOnly />
+            </p>
           </div>
-
           <p className="text-gray-600 mb-6">{product.description}</p>
           <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition">
             Add to Cart
@@ -113,68 +88,98 @@ export default function Details() {
         </div>
       </div>
 
-      {/* Product Specifications Section */}
+      {/* Product Specifications */}
       <div className="w-full bg-gray-100 mt-12 p-8 rounded-lg">
         <h2 className="text-2xl font-bold mb-4">Product Details</h2>
         <div className="grid">
           <div className="flex">
-            <h3 className="font-medium w-32">Material:</h3>
-            <p className="text-gray-900">{product.material}</p>
+            <h3 className="font-medium w-32">Brand:</h3>
+            <p className="text-gray-900">{product.brand}</p>
           </div>
           <div className="flex my-2">
-            <h3 className="font-medium w-32">Texture:</h3>
-            <p className="text-gray-900">{product.texture}</p>
+            <h3 className="font-medium w-32">Category:</h3>
+            <p className="text-gray-900">{product.category}</p>
           </div>
-          <div className="flex">
-            <h3 className="font-medium w-32">Brand Color:</h3>
-            <p className="text-gray-900">{product.brandColor}</p>
+          <div className="flex my-2">
+            <h3 className="font-medium w-32">Stock:</h3>
+            <p className="text-gray-900">{product.stock}</p>
           </div>
         </div>
       </div>
+      {/* Product Info Section */}
+<div className="mt-12">
+  <h2 className="text-2xl font-bold mb-6">Product Information</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow">
+
+    {/* Return Policy */}
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800">Return Policy</h3>
+      <p className="text-gray-600 mt-1">{product.returnPolicy}</p>
+    </div>
+
+    {/* Shipping Information */}
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800">Shipping Information</h3>
+      <p className="text-gray-600 mt-1">{product.shippingInformation}</p>
+    </div>
+
+    {/* Warranty Information */}
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800">Warranty</h3>
+      <p className="text-gray-600 mt-1">{product.warrantyInformation}</p>
+    </div>
+
+    {/* Availability */}
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800">Availability</h3>
+      <p className="text-gray-600 mt-1">{product.availabilityStatus}</p>
+    </div>
+    
+  </div>
+</div>
+
 
       {/* Customer Reviews */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
-        <div className="space-y-6">
-          {reviews.map((review, index) => (
-            <div
-              key={index}
-              className="bg-white shadow rounded-lg p-6 flex flex-col sm:flex-row gap-4"
-            >
-              {/* Customer Image & Name */}
-              <div className="flex items-center gap-4 w-full sm:w-1/4">
-                <img
-                  src={review.image}
-                  alt={review.name}
-                  className="w-14 h-14 rounded-full object-cover"
-                />
-                <p className="text-gray-800 font-semibold">{review.name}</p>
-              </div>
-
-              {/* Star Rating & Review Text */}
-              <div className="flex-1">
-                <div className="flex items-center mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < review.rating ? "text-yellow-400" : "text-gray-300"
-                      }`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.945a1 1 0 00.95.69h4.148c.969 0 1.371 1.24.588 1.81l-3.357 2.44a1 1 0 00-.364 1.118l1.286 3.945c.3.921-.755 1.688-1.54 1.118L10 13.011l-3.357 2.44c-.784.57-1.838-.197-1.539-1.118l1.286-3.945a1 1 0 00-.364-1.118L2.67 9.372c-.783-.57-.38-1.81.588-1.81h4.148a1 1 0 00.95-.69l1.286-3.945z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600">{review.text}</p>
-              </div>
-            </div>
-          ))}
+      {/* Customer Reviews */}
+<div className="mt-12">
+  <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+  <div className="space-y-6">
+    {product.reviews && product.reviews.length > 0 ? (
+      product.reviews.map((review, index) => (
+        <div
+          key={index}
+          className="bg-white shadow rounded-lg p-6 flex flex-col sm:flex-row gap-4"
+        >
+          <div className="flex items-center gap-4 w-full sm:w-1/4">
+            <img
+              src={`https://randomuser.me/api/portraits/${
+                index % 2 === 0 ? "men" : "women"
+              }/${index + 10}.jpg`}
+              alt={review.reviewerName}
+              className="w-14 h-14 rounded-full object-cover"
+            />
+            <p className="text-gray-800 font-semibold">
+              {review.reviewerName}
+            </p>
+          </div>
+          <div className="flex-1">
+            <Rating value={review.rating} readOnly />
+            <p className="text-gray-600 mt-1">{review.comment}</p>
+            <p className="text-sm text-gray-400 mt-1">
+              {new Date(review.date).toLocaleDateString()}
+            </p>
+          </div>
         </div>
-      </div>
+      ))
+    ) : (
+      <p>No reviews yet.</p>
+    )}
+  </div>
+</div>
 
-      {/* Drop a Review */}
+
+
+      {/* Submit a Review */}
       <div className="my-8">
         <h2 className="text-xl font-semibold mb-2">Drop a review</h2>
         <textarea
@@ -189,9 +194,7 @@ export default function Details() {
             <Rating
               name="new-review-rating"
               value={newRating}
-              onChange={(e, newValue) => {
-                setNewRating(newValue);
-              }}
+              onChange={(e, newValue) => setNewRating(newValue)}
             />
           </Box>
           <button
