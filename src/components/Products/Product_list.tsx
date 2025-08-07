@@ -9,7 +9,7 @@ export default function Product_list() {
       try {
         const res = await fetch('https://dummyjson.com/products');
         const data = await res.json();
-        setProducts(data.products); // Store the array of products in state
+        setProducts(data.products);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }

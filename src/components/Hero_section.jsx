@@ -19,16 +19,16 @@ export default function Hero_section() {
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-34">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
             <div className="relative rounded-full px-3 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-              Explore our newest arrived instruments.{" "}
+              Explore our newest arrived Products.{" "}
               <Link className="font-semibold text-indigo-600" to={'/new-arrival'}><span aria-hidden="true" className="absolute inset-0" />View now <span aria-hidden="true">&rarr;</span></Link>
             </div>
           </div>
           <div className="text-center">
             <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
-              Find Your Perfect Instrument
+              Everything You Need, Just a Click Away.
             </h1>
             <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
-              Explore our wide selection of high-qualtiy musical instrument and
+              Explore our wide selection of high-qualtiy Products and
               accessories.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
